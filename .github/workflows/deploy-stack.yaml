@@ -1,0 +1,39 @@
+name: "Serverless Build and Deploy"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feature**'
+    paths-ignore:
+      - '**/README.md'
+      - '**/.github/workflows/**.yaml'
+
+
+permissions:
+  id-token: write # This is required for aws oidc connection
+  contents: write # This is required for actions/checkout
+  issues: write
+  pull-requests: write # This is required for gh bot to comment PR  
+
+jobs:
+  create:
+    name: "deploy"
+    uses: subhamay-bhattacharyya/9999-reusable-wf/.github/workflows/sls-cicd-deploy.yaml@main
+    with:
+      deploy-reviewer-test: 142895397
+      deploy-reviewer-prod: 144537759
+      pr-approver: bsubhamay-approver
+    secrets: 
+      git-token: ${{ secrets.GIT_TOKEN }}
+      aws-region:  ${{ secrets.AWS_REGION }}
+      devl-aws-role-arn: ${{ secrets.DEVL_AWS_ROLE_ARN }}
+      devl-kms-key-arn:  ${{ secrets.DEVL_AWS_KMS_KEY_ARN }}
+      devl-aws-sls-artifacts-bucket-name:  ${{ secrets.DEVL_AWS_SLS_ARTIFACTS_BUCKET_NAME }}
+      test-aws-role-arn: ${{ secrets.TEST_AWS_ROLE_ARN }}
+      test-kms-key-arn: ${{ secrets.TEST_AWS_KMS_KEY_ARN }}
+      test-aws-sls-artifacts-bucket-name:  ${{ secrets.TEST_AWS_SLS_ARTIFACTS_BUCKET_NAME }}
+      prod-aws-role-arn: ${{ secrets.PROD_AWS_ROLE_ARN }}
+      prod-kms-key-arn: ${{ secrets.PROD_AWS_KMS_KEY_ARN }}
+      prod-aws-sls-artifacts-bucket-name:  ${{ secrets.PROD_AWS_SLS_ARTIFACTS_BUCKET_NAME }}
